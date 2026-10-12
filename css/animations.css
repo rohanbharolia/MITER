@@ -1,0 +1,62 @@
+/* ===================================================================
+   Animations — Refined, subtle, professional
+   =================================================================== */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 rgba(14,165,233,.0); }
+  50%      { box-shadow: 0 0 18px rgba(14,165,233,.20); }
+}
+@keyframes pulseRed {
+  0%, 100% { box-shadow: 0 0 0 rgba(239,68,68,.0); }
+  50%      { box-shadow: 0 0 14px rgba(239,68,68,.25); }
+}
+/* NOTE: @keyframes typewriter removed — the terminal typewriter effect is
+   driven by JS setTimeout chains in storyPlayer.js, not CSS animation. */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+/* NOTE: @keyframes typewriter and @keyframes scanline were removed —
+   the typewriter effect is handled in JS (storyPlayer.js streamTerminalCommand)
+   and scanline was never referenced by any rule. */
+
+/* ── Story animations ── */
+.act-transition { animation: fadeUp .25s ease-out; }
+.terminal-new-line { animation: slideIn .2s ease-out; }
+.soc-alert-flash { animation: pulseRed .5s ease-out; }
+
+/* ── Canvas pulse ── */
+.canvas-pulse { animation: pulseGlow 2.5s ease-in-out infinite; }
+
+/* ── Modal entrance ── */
+.modal-overlay:not(.hidden) { animation: fadeIn .15s ease-out; }
+.modal-overlay:not(.hidden) .modal-dialog { animation: fadeUp .2s ease-out; }
+
+/* ── Quiz feedback ── */
+.quiz-feedback-box:not(.hidden) { animation: fadeUp .2s ease-out; }
+.sim-outcome-container:not(.hidden) { animation: fadeUp .2s ease-out; }
+
+/* ── Technique card on hover ── */
+.technique-card { transition: all .15s ease; }
+
+/* ── Terminal typing effect ── */
+.terminal-cursor {
+  display: inline-block;
+  width: 7px; height: 14px;
+  background: var(--cyan);
+  margin-left: 2px;
+  animation: blink .8s step-end infinite;
+  vertical-align: text-bottom;
+}

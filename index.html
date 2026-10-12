@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MITRE ATT&CK Framework — Interactive Learning Platform</title>
+  <meta name="description" content="Master all 14 MITRE ATT&CK Enterprise Tactics through animated storytelling, interactive simulations, and SOC detection playbooks.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230ea5e9'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-family='sans-serif' font-weight='bold'>M</text></svg>">
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark">M</div>
+      <div>
+        <h1 class="brand-name">MITRE ATT&CK</h1>
+        <p class="brand-sub">Interactive Learning Platform &middot; Enterprise v14.1</p>
+      </div>
+    </div>
+
+    <nav class="nav-tabs" aria-label="Primary">
+      <button class="nav-tab active" data-tab="tab-story">Story Mode</button>
+      <button class="nav-tab" data-tab="tab-matrix">Matrix Explorer</button>
+      <button class="nav-tab" data-tab="tab-simulator">Simulation Lab</button>
+      <button class="nav-tab" data-tab="tab-arena">Challenge Arena</button>
+      <button class="nav-tab" data-tab="tab-playbook">Defense Playbook</button>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon" id="btnAudioToggle" title="Toggle sound effects">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <span class="btn-label">Sound On</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Main ── -->
+  <main class="app-main">
+
+    <!-- ═══════════ TAB 1 — STORY MODE ═══════════ -->
+    <section id="tab-story" class="tab-pane active">
+
+      <!-- Controls bar -->
+      <div class="story-controls">
+        <div class="story-identity">
+          <span class="tag tag--red">APT-94 &middot; PHANTOM HYDRA</span>
+          <div>
+            <h2 class="story-title">Operation Apex Dawn</h2>
+            <p class="story-sub">Target: Apex Global Financial Corp &mdash; Full 14-Tactic Kill-Chain</p>
+          </div>
+        </div>
+        <div class="playback">
+          <button class="btn-sm" id="btnRestartStory" title="Restart">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          </button>
+          <button class="btn-sm" id="btnPrevAct" title="Previous act">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="btn-primary" id="btnPlayStory">
+            <span class="play-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </span>
+            Play
+          </button>
+          <button class="btn-sm" id="btnNextAct" title="Next act">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <select class="select-sm" id="storySpeedSelect" title="Playback speed">
+            <option value="0.5">0.5x</option>
+            <option value="1.0" selected>1.0x</option>
+            <option value="1.75">1.75x</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline-bar">
+        <div class="timeline-track">
+          <div class="timeline-fill" id="storyProgressBar"></div>
+        </div>
+        <div class="timeline-steps" id="timelineScrubber"></div>
+      </div>
+
+      <!-- Split layout -->
+      <div class="story-grid">
+
+        <!-- Canvas -->
+        <div class="card canvas-card">
+          <div class="card-bar">
+            <span class="card-label">Infrastructure Topology</span>
+            <span class="card-meta">
+              <span class="dot dot--red"></span> Adversary
+              <span class="dot dot--green"></span> Secure
+              <span class="dot dot--amber"></span> Targeted
+            </span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="cyberNetworkCanvas"></canvas>
+            <div class="node-drawer hidden" id="nodeInspectorDrawer">
+              <div class="drawer-head">
+                <strong id="inspNodeTitle">Node</strong>
+                <button class="btn-close" id="btnCloseNodeInspector">&times;</button>
+              </div>
+              <div class="drawer-body">
+                <p id="inspNodeStatus" class="tag tag--cyan">SECURE</p>
+                <p id="inspNodeRole"></p>
+                <p id="inspNodeType"></p>
+                <p id="inspNodeIp"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Narrative panel -->
+        <div class="narrative-panel">
+
+          <div class="card narrative-card">
+            <div class="act-row">
+              <span class="act-badge" id="actBadge">ACT 1 / 14</span>
+              <span class="act-ids" id="actTacticId">TA0043 &middot; T1595</span>
+            </div>
+            <h3 class="tactic-name" id="actTacticName">Reconnaissance</h3>
+            <p class="chapter-title" id="actChapterTitle">Act I: In The Shadows</p>
+            <p class="narrative-text" id="actNarrativeText">Loading...</p>
+
+            <div class="analogy-box">
+              <p class="analogy-label" id="actAnalogyBadge">Analogy</p>
+              <p class="analogy-body" id="actAnalogyText"></p>
+            </div>
+
+            <div class="persp-grid">
+              <div class="persp persp--red">
+                <p class="persp-label">Adversary Perspective</p>
+                <p id="actAttackerPersp"></p>
+              </div>
+              <div class="persp persp--blue">
+                <p class="persp-label">Defender Perspective</p>
+                <p id="actDefenderPersp"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Terminal -->
+          <div class="card terminal-card">
+            <div class="terminal-bar">
+              <span class="terminal-dots"><i></i><i></i><i></i></span>
+              <span class="terminal-title">Adversary Console</span>
+            </div>
+            <div class="terminal-body" id="terminalOutput">
+              <div class="terminal-line"><span class="prompt">~$</span> <span class="cmd">awaiting execution...</span></div>
+            </div>
+          </div>
+
+          <!-- SOC Alert -->
+          <div class="card soc-card" id="socAlertBox">
+            <div class="soc-header">
+              <span class="severity-pill">INFO</span>
+              <span class="soc-code">SOC-STANDBY</span>
+              <span class="soc-time">--:--:--</span>
+            </div>
+            <p class="soc-message">Monitoring enterprise telemetry.</p>
+            <p class="soc-action">Baseline collection active.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ TAB 2 — MATRIX EXPLORER ═══════════ -->
+    <section id="tab-matrix" class="tab-pane">
+      <div class="matrix-toolbar">
+        <div class="toolbar-left">
+          <input type="text" id="matrixSearchInput" class="input-search" placeholder="Search techniques (e.g. lsass, phishing, kerberos)...">
+          <select id="matrixTacticFilter" class="select-sm">
+            <option value="ALL">All 14 Tactics</option>
+          </select>
+        </div>
+        <p class="toolbar-meta">Enterprise ATT&CK &middot; 14 Tactics &middot; 42 Techniques</p>
+      </div>
+      <div id="matrixBoardContainer"></div>
+    </section>
+
+    <!-- ═══════════ TAB 3 — SIMULATION LAB ═══════════ -->
+    <section id="tab-simulator" class="tab-pane">
+      <div id="simulatorContainer"></div>
+    </section>
+
+    <!-- ═══════════ TAB 4 — CHALLENGE ARENA ═══════════ -->
+    <section id="tab-arena" class="tab-pane">
+      <div id="quizArenaContainer"></div>
+    </section>
+
+    <!-- ═══════════ TAB 5 — DEFENSE PLAYBOOK ═══════════ -->
+    <section id="tab-playbook" class="tab-pane">
+      <div id="playbookContainer"></div>
+    </section>
+  </main>
+
+  <!-- ── Technique Modal ── -->
+  <div class="modal-overlay hidden" id="techniqueModalBackdrop">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTechName">
+      <div class="modal-head">
+        <div>
+          <div class="modal-ids">
+            <span class="modal-tech-id" id="modalTechId">T1566</span>
+            <span class="modal-tactic-pill" id="modalTacticPill">Initial Access</span>
+          </div>
+          <h3 class="modal-title" id="modalTechName">Technique</h3>
+        </div>
+        <button class="btn-close" id="btnCloseTechModal">&times;</button>
+      </div>
+      <div class="modal-content">
+        <section class="modal-section">
+          <h4>Technique Mechanics</h4>
+          <div id="modalDiagramContainer" class="diagram-box"></div>
+        </section>
+        <section class="modal-section">
+          <h4>Summary</h4>
+          <p id="modalSummary"></p>
+        </section>
+        <section class="modal-section">
+          <h4>Adversary Usage</h4>
+          <p id="modalUsage"></p>
+        </section>
+        <section class="modal-section">
+          <h4>Execution Command</h4>
+          <pre class="code-block"><code id="modalCommandSnippet"></code></pre>
+        </section>
+        <section class="modal-section">
+          <h4>Detection Indicators</h4>
+          <p id="modalDetection"></p>
+        </section>
+        <section class="modal-section">
+          <h4>Mitigation Strategy</h4>
+          <p id="modalMitigation"></p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
