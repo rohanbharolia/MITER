@@ -173,6 +173,12 @@ export class SimulatorLab {
 
         <div class="sim-choices-panel">
           <h3 class="panel-subtitle">⚡ Select Your Tactical Response:</h3>
+          <!-- Role badge — makes it clear which side the learner is playing -->
+          <div class="sim-role-badge ${scenario.choices[0].type === 'defender' ? 'role-defender' : 'role-adversary'}">
+            ${scenario.choices[0].type === 'defender'
+              ? '🛡️ You are the Defender — choose the best containment action'
+              : '🔴 You are the Attacker — choose your breach approach'}
+          </div>
           <div class="sim-options-list">
             ${scenario.choices.map((choice, cIdx) => `
               <div class="sim-choice-card" data-choice-index="${cIdx}">

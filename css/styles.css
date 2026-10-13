@@ -1044,3 +1044,279 @@ body {
   /* Red/blue table: stack vertically */
   .red-blue-table { grid-template-columns: 1fr; }
 }
+
+
+/* ═════════════════════════════════════════════════════════
+   ONBOARDING MODAL
+   ═════════════════════════════════════════════════════════ */
+
+.onboarding-dialog {
+  max-width: 860px;
+  width: 100%;
+}
+
+.onboarding-hero {
+  text-align: center;
+  padding: 1.75rem 1.5rem .85rem;
+  border-bottom: 1px solid var(--border);
+}
+.onboarding-brand-mark {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--heading); font-weight: 800; font-size: 24px; color: #fff;
+  margin: 0 auto .85rem;
+}
+.onboarding-title {
+  font-family: var(--heading); font-size: 24px; font-weight: 800; color: #fff; margin-bottom: .35rem;
+}
+.onboarding-subtitle {
+  font-size: 14px; color: var(--t3); max-width: 480px; margin: 0 auto; line-height: 1.6;
+}
+
+.onboarding-what-box {
+  padding: 1.15rem 1.5rem;
+  background: rgba(14,165,233,.05);
+  border-bottom: 1px solid var(--border);
+}
+.onboarding-what-box h3 {
+  font-family: var(--heading); font-size: 14px; color: var(--cyan); margin-bottom: .45rem; font-weight: 700;
+}
+.onboarding-what-box p { font-size: 13.5px; color: var(--t2); line-height: 1.6; }
+
+.onboarding-modes {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .65rem;
+  padding: 1.15rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+@media (max-width: 700px) {
+  .onboarding-modes { grid-template-columns: repeat(2, 1fr); }
+}
+
+.onboard-mode-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: .85rem .65rem;
+  text-align: center;
+  position: relative;
+}
+.onboard-mode-card strong { display: block; font-size: 12px; color: #fff; margin: .35rem 0 .2rem; }
+.onboard-mode-card p { font-size: 11px; color: var(--t4); line-height: 1.4; }
+.onboard-mode-icon { font-size: 22px; }
+.onboard-mode-badge {
+  display: inline-block;
+  margin-top: .5rem;
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  padding: 2px 7px; border-radius: 3px;
+  background: rgba(255,255,255,.06); color: var(--t4);
+}
+.onboard-mode-badge.start-here {
+  background: rgba(14,165,233,.18); color: var(--cyan);
+  box-shadow: 0 0 0 1px rgba(14,165,233,.35);
+}
+
+.onboarding-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .85rem 1.5rem;
+}
+.onboard-skip-label {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: 12px; color: var(--t4); cursor: pointer;
+}
+.onboard-start-btn { font-size: 14px; padding: 8px 22px; }
+
+/* ═════════════════════════════════════════════════════════
+   PROGRESS DOTS
+   ═════════════════════════════════════════════════════════ */
+
+.progress-dots-wrap {
+  display: flex; align-items: center; gap: .45rem;
+  padding: 4px 10px;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-sm);
+}
+.progress-dots-label {
+  font-family: var(--mono); font-size: 10px; color: var(--t4);
+}
+.progress-dots-row { display: flex; gap: 5px; align-items: center; }
+.progress-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.12);
+  transition: background .3s, box-shadow .3s;
+}
+.progress-dot.done {
+  background: var(--emerald);
+  box-shadow: 0 0 6px rgba(16,185,129,.5);
+  border-color: var(--emerald);
+}
+
+/* ═════════════════════════════════════════════════════════
+   JARGON TOOLTIPS
+   ═════════════════════════════════════════════════════════ */
+
+.jargon-term {
+  border-bottom: 1px dashed rgba(14,165,233,.55);
+  cursor: help;
+  color: inherit;
+}
+.jargon-term:hover { border-bottom-color: var(--cyan); color: var(--cyan); }
+
+.jargon-tooltip {
+  position: fixed;
+  z-index: 9999;
+  width: 260px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-active);
+  border-radius: var(--r-md);
+  padding: .65rem .85rem;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}
+.jargon-tooltip:not(.hidden) { pointer-events: auto; }
+.jargon-tooltip-term {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  color: var(--cyan); margin-bottom: .3rem; letter-spacing: .04em;
+}
+.jargon-tooltip-def {
+  font-size: 12px; color: var(--t2); line-height: 1.5;
+}
+
+/* ═════════════════════════════════════════════════════════
+   TERMINAL CAPTION (plain-English command explanation)
+   ═════════════════════════════════════════════════════════ */
+
+.terminal-hint {
+  margin-left: auto;
+  font-family: var(--mono); font-size: 10px; color: var(--t4); font-style: italic;
+}
+.terminal-caption {
+  padding: .45rem .75rem;
+  background: rgba(245,158,11,.06);
+  border-top: 1px solid rgba(245,158,11,.15);
+  font-size: 12px; color: #fde68a; line-height: 1.45;
+  font-style: italic;
+  display: none; /* shown by JS when commandCaption exists */
+}
+
+/* ═════════════════════════════════════════════════════════
+   SOC PLAIN-ENGLISH TOGGLE
+   ═════════════════════════════════════════════════════════ */
+
+.soc-toggle-btn {
+  all: unset;
+  margin-left: auto;
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  color: var(--cyan); cursor: pointer;
+  padding: 2px 7px; border-radius: 3px;
+  border: 1px solid rgba(14,165,233,.30);
+  transition: all .15s;
+  white-space: nowrap;
+}
+.soc-toggle-btn:hover { background: rgba(14,165,233,.1); }
+
+.soc-plain {
+  font-size: 13px; color: var(--t1); line-height: 1.55;
+  padding: .2rem 0; margin-bottom: .3rem;
+}
+
+/* ═════════════════════════════════════════════════════════
+   SIMULATOR ROLE BADGE
+   ═════════════════════════════════════════════════════════ */
+
+.sim-role-badge {
+  display: inline-flex; align-items: center;
+  gap: .5rem;
+  padding: .5rem .85rem;
+  border-radius: var(--r-sm);
+  font-family: var(--heading); font-size: 13px; font-weight: 700;
+  margin-bottom: .85rem;
+}
+.sim-role-badge.role-adversary {
+  background: rgba(239,68,68,.10); color: #fca5a5;
+  border: 1px solid rgba(239,68,68,.25);
+}
+.sim-role-badge.role-defender {
+  background: rgba(16,185,129,.10); color: #86efac;
+  border: 1px solid rgba(16,185,129,.25);
+}
+
+/* ═════════════════════════════════════════════════════════
+   QUIZ DIFFICULTY BADGES
+   ═════════════════════════════════════════════════════════ */
+
+.difficulty-badge {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 3px; white-space: nowrap; flex-shrink: 0;
+}
+.difficulty-beginner  { background: rgba(16,185,129,.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,.25); }
+.difficulty-intermediate { background: rgba(245,158,11,.12); color: #fcd34d; border: 1px solid rgba(245,158,11,.25); }
+.difficulty-advanced  { background: rgba(239,68,68,.12); color: #fca5a5; border: 1px solid rgba(239,68,68,.25); }
+
+/* ═════════════════════════════════════════════════════════
+   QUIZ COMPLETION SCREEN
+   ═════════════════════════════════════════════════════════ */
+
+.quiz-completion-card {
+  max-width: 540px; margin: 2rem auto;
+  background: var(--bg-card); border: 1px solid var(--border-active);
+  border-radius: var(--r-lg); padding: 2rem;
+  text-align: center;
+}
+.completion-header { margin-bottom: 1.5rem; }
+.completion-icon { font-size: 48px; margin-bottom: .5rem; }
+.completion-title { font-family: var(--heading); font-size: 22px; font-weight: 800; color: #fff; margin-bottom: .25rem; }
+.completion-grade { font-family: var(--mono); font-size: 13px; color: var(--cyan); }
+.completion-stats {
+  display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem;
+}
+.comp-stat {
+  display: flex; flex-direction: column; align-items: center; gap: .2rem;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: .75rem 1.25rem;
+}
+.comp-stat-val { font-family: var(--heading); font-size: 26px; font-weight: 800; color: var(--cyan); }
+.comp-stat-label { font-size: 11px; color: var(--t4); font-family: var(--mono); }
+.completion-next p { font-size: 13px; color: var(--t3); margin-bottom: .65rem; }
+.completion-actions { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
+
+/* ═════════════════════════════════════════════════════════
+   CHAIN PUZZLE CONTEXT BOX
+   ═════════════════════════════════════════════════════════ */
+
+.puzzle-why-box {
+  background: rgba(14,165,233,.05);
+  border-left: 3px solid var(--cyan);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: .65rem .85rem;
+  margin-top: .65rem;
+  font-size: 12.5px; color: var(--t2); line-height: 1.5;
+}
+.puzzle-note {
+  display: inline-block; margin-top: .35rem;
+  font-family: var(--mono); font-size: 10px; color: var(--t4);
+}
+
+/* ═════════════════════════════════════════════════════════
+   TECHNIQUE MODAL — command details collapsible
+   ═════════════════════════════════════════════════════════ */
+
+.tech-command-details {
+  cursor: pointer;
+}
+.tech-command-details summary {
+  font-family: var(--heading); font-size: 13px; font-weight: 700;
+  color: var(--t2); text-transform: uppercase; letter-spacing: .04em;
+  list-style: none; display: flex; align-items: center; gap: .4rem;
+  user-select: none;
+}
+.tech-command-details summary::-webkit-details-marker { display: none; }
+.tech-command-details summary::before {
+  content: "▶";
+  font-size: 9px; color: var(--t4); transition: transform .15s;
+}
+.tech-command-details[open] summary::before { transform: rotate(90deg); }
+.details-hint { font-size: 11px; color: var(--t4); font-family: var(--sans); font-weight: 400; text-transform: none; letter-spacing: 0; }

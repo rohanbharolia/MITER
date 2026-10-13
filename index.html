@@ -14,6 +14,83 @@
 </head>
 <body>
 
+  <!-- ══════════════════════════════════════════════════════
+       ONBOARDING MODAL — shown on first visit
+       ══════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="onboardingModal" role="dialog" aria-modal="true" aria-labelledby="onboardTitle">
+    <div class="modal-dialog onboarding-dialog">
+      <div class="onboarding-hero">
+        <div class="onboarding-brand-mark">M</div>
+        <h2 class="onboarding-title" id="onboardTitle">Welcome to MITRE ATT&CK</h2>
+        <p class="onboarding-subtitle">The world's most-used framework for understanding how cyber attacks actually work — made interactive.</p>
+      </div>
+
+      <div class="onboarding-what-box">
+        <h3>What is MITRE ATT&CK?</h3>
+        <p>
+          <strong>MITRE ATT&amp;CK</strong> is a free, publicly maintained knowledge base that catalogues every known
+          tactic and technique used by real-world hackers — from the first moment they target an
+          organisation all the way to deploying ransomware. Security teams worldwide use it as a
+          common language to describe, detect, and defend against attacks.
+        </p>
+        <p style="margin-top:.6rem">
+          This platform teaches all <strong>14 attack tactics</strong> through five interactive modes.
+          No prior cybersecurity experience needed.
+        </p>
+      </div>
+
+      <div class="onboarding-modes">
+        <div class="onboard-mode-card">
+          <span class="onboard-mode-icon">🎬</span>
+          <strong>Story Mode</strong>
+          <p>Watch a live attack unfold across a real company network, act by act.</p>
+          <span class="onboard-mode-badge start-here">Start Here</span>
+        </div>
+        <div class="onboard-mode-card">
+          <span class="onboard-mode-icon">🗺️</span>
+          <strong>Matrix Explorer</strong>
+          <p>Browse all 14 tactics and 42 techniques with deep-dive modals.</p>
+          <span class="onboard-mode-badge">Then This</span>
+        </div>
+        <div class="onboard-mode-card">
+          <span class="onboard-mode-icon">⚔️</span>
+          <strong>Simulation Lab</strong>
+          <p>Make real attack/defence decisions and see the consequences.</p>
+          <span class="onboard-mode-badge">Step 3</span>
+        </div>
+        <div class="onboard-mode-card">
+          <span class="onboard-mode-icon">🏆</span>
+          <strong>Challenge Arena</strong>
+          <p>Test your knowledge with scenario quizzes and the attack chain puzzle.</p>
+          <span class="onboard-mode-badge">Step 4</span>
+        </div>
+        <div class="onboard-mode-card">
+          <span class="onboard-mode-icon">📚</span>
+          <strong>Defense Playbook</strong>
+          <p>Reference encyclopedia — detection rules and mitigations for every tactic.</p>
+          <span class="onboard-mode-badge">Reference</span>
+        </div>
+      </div>
+
+      <div class="onboarding-footer">
+        <label class="onboard-skip-label">
+          <input type="checkbox" id="onboardDontShow"> Don't show this again
+        </label>
+        <button class="btn-primary onboard-start-btn" id="btnStartLearning">
+          Start Learning →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       GLOSSARY TOOLTIP POPOVER (singleton, moved by JS)
+       ══════════════════════════════════════════════════════ -->
+  <div class="jargon-tooltip hidden" id="jargonTooltip" role="tooltip">
+    <div class="jargon-tooltip-term" id="jargonTerm"></div>
+    <div class="jargon-tooltip-def" id="jargonDef"></div>
+  </div>
+
   <!-- ── Header ── -->
   <header class="app-header">
     <div class="brand">
@@ -33,9 +110,20 @@
     </nav>
 
     <div class="header-actions">
+      <!-- 5-dot learning progress tracker -->
+      <div class="progress-dots-wrap" title="Your learning progress across all 5 modes">
+        <span class="progress-dots-label">Progress</span>
+        <div id="progressDotsContainer" class="progress-dots-row"></div>
+      </div>
+
       <button class="btn-icon" id="btnAudioToggle" title="Toggle sound effects">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
         <span class="btn-label">Sound On</span>
+      </button>
+
+      <button class="btn-icon" id="btnShowHelp" title="Show introduction">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="btn-label">Help</span>
       </button>
     </div>
   </header>
@@ -56,10 +144,10 @@
           </div>
         </div>
         <div class="playback">
-          <button class="btn-sm" id="btnRestartStory" title="Restart">
+          <button class="btn-sm" id="btnRestartStory" title="Restart from Act 1">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
           </button>
-          <button class="btn-sm" id="btnPrevAct" title="Previous act">
+          <button class="btn-sm" id="btnPrevAct" title="Previous act (← key)">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <button class="btn-primary" id="btnPlayStory">
@@ -68,10 +156,10 @@
             </span>
             Play
           </button>
-          <button class="btn-sm" id="btnNextAct" title="Next act">
+          <button class="btn-sm" id="btnNextAct" title="Next act (→ key)">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
-          <select class="select-sm" id="storySpeedSelect" title="Playback speed">
+          <select class="select-sm" id="storySpeedSelect" title="Autoplay speed">
             <option value="0.5">0.5x</option>
             <option value="1.0" selected>1.0x</option>
             <option value="1.75">1.75x</option>
@@ -136,11 +224,11 @@
 
             <div class="persp-grid">
               <div class="persp persp--red">
-                <p class="persp-label">Adversary Perspective</p>
+                <p class="persp-label">🔴 Adversary Perspective</p>
                 <p id="actAttackerPersp"></p>
               </div>
               <div class="persp persp--blue">
-                <p class="persp-label">Defender Perspective</p>
+                <p class="persp-label">🛡️ Defender Perspective</p>
                 <p id="actDefenderPersp"></p>
               </div>
             </div>
@@ -151,10 +239,13 @@
             <div class="terminal-bar">
               <span class="terminal-dots"><i></i><i></i><i></i></span>
               <span class="terminal-title">Adversary Console</span>
+              <span class="terminal-hint">What is the attacker running?</span>
             </div>
             <div class="terminal-body" id="terminalOutput">
-              <div class="terminal-line"><span class="prompt">~$</span> <span class="cmd">awaiting execution...</span></div>
+              <div class="terminal-line"><span class="prompt">~$</span> <span class="cmd-text">awaiting execution...</span></div>
             </div>
+            <!-- Plain-English caption explaining what the command does -->
+            <div class="terminal-caption" id="terminalCaption"></div>
           </div>
 
           <!-- SOC Alert -->
@@ -163,9 +254,14 @@
               <span class="severity-pill">INFO</span>
               <span class="soc-code">SOC-STANDBY</span>
               <span class="soc-time">--:--:--</span>
+              <!-- Plain-English toggle -->
+              <button class="soc-toggle-btn" id="btnSocToggle" title="Switch between technical and plain English">
+                🔍 Plain English
+              </button>
             </div>
-            <p class="soc-message">Monitoring enterprise telemetry.</p>
-            <p class="soc-action">Baseline collection active.</p>
+            <p class="soc-message" id="socMessage">Monitoring enterprise telemetry.</p>
+            <p class="soc-plain" id="socPlain" style="display:none"></p>
+            <p class="soc-action" id="socAction">Baseline collection active.</p>
           </div>
 
         </div>
@@ -181,7 +277,7 @@
             <option value="ALL">All 14 Tactics</option>
           </select>
         </div>
-        <p class="toolbar-meta">Enterprise ATT&CK &middot; 14 Tactics &middot; 42 Techniques</p>
+        <p class="toolbar-meta">Enterprise ATT&amp;CK &middot; 14 Tactics &middot; 42 Techniques &middot; Click any card to deep-dive</p>
       </div>
       <div id="matrixBoardContainer"></div>
     </section>
@@ -216,8 +312,9 @@
         <button class="btn-close" id="btnCloseTechModal">&times;</button>
       </div>
       <div class="modal-content">
+        <!-- Reordered: Summary first, command last (collapsed) -->
         <section class="modal-section">
-          <h4>Technique Mechanics</h4>
+          <h4>How It Works</h4>
           <div id="modalDiagramContainer" class="diagram-box"></div>
         </section>
         <section class="modal-section">
@@ -225,20 +322,23 @@
           <p id="modalSummary"></p>
         </section>
         <section class="modal-section">
-          <h4>Adversary Usage</h4>
+          <h4>Real-World Adversary Usage</h4>
           <p id="modalUsage"></p>
         </section>
         <section class="modal-section">
-          <h4>Execution Command</h4>
-          <pre class="code-block"><code id="modalCommandSnippet"></code></pre>
-        </section>
-        <section class="modal-section">
-          <h4>Detection Indicators</h4>
+          <h4>How Defenders Detect It</h4>
           <p id="modalDetection"></p>
         </section>
         <section class="modal-section">
-          <h4>Mitigation Strategy</h4>
+          <h4>How to Stop It (Mitigation)</h4>
           <p id="modalMitigation"></p>
+        </section>
+        <!-- Technical command now collapsed by default -->
+        <section class="modal-section">
+          <details class="tech-command-details">
+            <summary>⚙️ Technical Command Example <span class="details-hint">(click to expand)</span></summary>
+            <pre class="code-block" style="margin-top:.65rem"><code id="modalCommandSnippet"></code></pre>
+          </details>
         </section>
       </div>
     </div>

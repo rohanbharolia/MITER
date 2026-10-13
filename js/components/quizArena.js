@@ -7,6 +7,8 @@ import { soundFX } from "../utils/audioFx.js";
 const QUIZ_QUESTIONS = [
   {
     id: "q1",
+    difficulty: "intermediate",
+    difficultyLabel: "🟡 Intermediate",
     scenario: "A threat actor utilizes `rundll32.exe C:\\windows\\system32\\comsvcs.dll, MiniDump` against process ID 684 (lsass.exe). What is their primary tactical objective?",
     options: [
       { text: "TA0006: Credential Access (Dump plaintext tokens and password hashes)", correct: true },
@@ -14,10 +16,12 @@ const QUIZ_QUESTIONS = [
       { text: "TA0005: Defense Evasion (Blind antivirus scanning engine)", correct: false },
       { text: "TA0040: Impact (Encrypt host storage drives)", correct: false }
     ],
-    explanation: "Minidumping the LSASS process extracts cached NTLM hashes, Kerberos tickets, and credentials from memory, representing Credential Access (TA0006, T1003.001)."
+    explanation: "Minidumping the LSASS process extracts cached NTLM hashes, Kerberos tickets, and credentials from memory, representing Credential Access (TA0006, T1003.001). LSASS is where Windows stores passwords of currently logged-in users."
   },
   {
     id: "q2",
+    difficulty: "beginner",
+    difficultyLabel: "🟢 Beginner",
     scenario: "An employee receives an email titled 'Urgent Payroll Update' containing a password-protected zip file with an LNK shortcut pointing to PowerShell. Which Initial Access technique is this?",
     options: [
       { text: "T1190: Exploit Public-Facing Application", correct: false },
@@ -25,10 +29,12 @@ const QUIZ_QUESTIONS = [
       { text: "T1078: Valid Accounts", correct: false },
       { text: "T1133: External Remote Services", correct: false }
     ],
-    explanation: "Sending deceptive emails with weaponized attachments (ZIP, ISO, PDF, Office documents) is Spearphishing Attachment (T1566.001 under Initial Access TA0001)."
+    explanation: "Sending deceptive emails with weaponized attachments (ZIP, ISO, PDF, Office documents) is Spearphishing Attachment (T1566.001 under Initial Access TA0001). This is the #1 way attackers get their first foothold in an organisation."
   },
   {
     id: "q3",
+    difficulty: "beginner",
+    difficultyLabel: "🟢 Beginner",
     scenario: "After compromising an HR desktop, the adversary creates a recurring task via `schtasks.exe` to run a beacon every 60 minutes as SYSTEM. Why do they do this?",
     options: [
       { text: "To increase network bandwidth speed", correct: false },
@@ -36,10 +42,12 @@ const QUIZ_QUESTIONS = [
       { text: "Exfiltration (TA0010): Send data to cloud repositories", correct: false },
       { text: "Discovery (TA0007): Query domain controller LDAP records", correct: false }
     ],
-    explanation: "Scheduled tasks (T1053) ensure that even if the victim restarts their computer, the malware automatically restarts, securing Persistence (TA0003)."
+    explanation: "Scheduled tasks (T1053) ensure that even if the victim restarts their computer, the malware automatically restarts. This is called Persistence (TA0003) — ensuring the attacker can't be locked out by a simple reboot."
   },
   {
     id: "q4",
+    difficulty: "intermediate",
+    difficultyLabel: "🟡 Intermediate",
     scenario: "The attacker reuses an extracted NTLM password hash to connect to a remote server over port 445 (SMB) without needing the plaintext password. What technique is this?",
     options: [
       { text: "T1550.002: Pass-the-Hash (PtH) under Lateral Movement", correct: true },
@@ -47,10 +55,12 @@ const QUIZ_QUESTIONS = [
       { text: "T1562: Impair Defenses", correct: false },
       { text: "T1046: Network Service Discovery", correct: false }
     ],
-    explanation: "Pass-the-Hash (T1550.002) allows attackers to authenticate to remote services using stolen NTLM hashes, enabling Lateral Movement (TA0008) across internal networks."
+    explanation: "Pass-the-Hash (T1550.002) allows attackers to authenticate to remote services using stolen NTLM hashes — they never need to know the actual password. This enables Lateral Movement (TA0008) to spread across internal machines."
   },
   {
     id: "q5",
+    difficulty: "advanced",
+    difficultyLabel: "🔴 Advanced",
     scenario: "A script runs `vssadmin.exe delete shadows /all /quiet` followed by high-entropy file overwrites across all network shares. Which MITRE Tactic does this represent?",
     options: [
       { text: "TA0043: Reconnaissance", correct: false },
@@ -58,7 +68,7 @@ const QUIZ_QUESTIONS = [
       { text: "TA0040: Impact (Disrupt availability and encrypt data)", correct: true },
       { text: "TA0009: Collection", correct: false }
     ],
-    explanation: "Deleting Volume Shadow Copies and encrypting files is the signature of ransomware, classified under Impact (TA0040 - Inhibit System Recovery T1490 and Data Encrypted for Impact T1486)."
+    explanation: "Deleting Volume Shadow Copies (Windows backups) and then encrypting files is the signature of ransomware, classified under Impact (TA0040). The VSS deletion prevents recovery — that's why offline, air-gapped backups are critical."
   }
 ];
 
@@ -144,6 +154,7 @@ export class QuizArena {
           <div class="quiz-bar">
             <div class="quiz-bar-fill" style="width: ${((this.currentQIndex + 1) / QUIZ_QUESTIONS.length) * 100}%"></div>
           </div>
+          <span class="difficulty-badge difficulty-${q.difficulty}">${q.difficultyLabel}</span>
         </div>
 
         <h3 class="quiz-scenario-text">${q.scenario}</h3>
@@ -194,11 +205,11 @@ export class QuizArena {
         feedbackBox.classList.remove("hidden");
         feedbackBox.innerHTML = `
           <div class="feedback-badge ${opt.correct ? "success" : "failure"}">
-            ${opt.correct ? "✅ Correct!" : "❌ Incorrect"}
+            ${opt.correct ? "✅ Correct!" : "❌ Incorrect — here's why:"}
           </div>
           <p class="feedback-explanation">${q.explanation}</p>
           <button class="next-q-btn" id="btnNextQuestion">
-            ${this.currentQIndex < QUIZ_QUESTIONS.length - 1 ? "Next Scenario ➔" : "Restart Quiz 🔄"}
+            ${this.currentQIndex < QUIZ_QUESTIONS.length - 1 ? "Next Scenario ➔" : "See Your Results 🏆"}
           </button>
         `;
 
@@ -206,12 +217,61 @@ export class QuizArena {
           soundFX.playClick();
           if (this.currentQIndex < QUIZ_QUESTIONS.length - 1) {
             this.currentQIndex++;
+            this.render();
           } else {
-            this.currentQIndex = 0;
+            // Show completion screen
+            this._showQuizCompletion(container);
           }
-          this.render();
         });
       });
+    });
+  }
+
+  _showQuizCompletion(container) {
+    const pct = Math.round((this.score / (QUIZ_QUESTIONS.length * 100)) * 100);
+    const grade = pct >= 80 ? "🏆 Expert Analyst" : pct >= 60 ? "🥈 Competent Defender" : "🎓 Keep Practising";
+    container.innerHTML = `
+      <div class="quiz-completion-card">
+        <div class="completion-header">
+          <div class="completion-icon">${pct >= 80 ? "🏆" : pct >= 60 ? "🥈" : "📚"}</div>
+          <h3 class="completion-title">Quiz Complete!</h3>
+          <p class="completion-grade">${grade}</p>
+        </div>
+        <div class="completion-stats">
+          <div class="comp-stat">
+            <span class="comp-stat-val">${this.score}</span>
+            <span class="comp-stat-label">Points Earned</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat-val">${pct}%</span>
+            <span class="comp-stat-label">Accuracy</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat-val">${this.streak}</span>
+            <span class="comp-stat-label">Final Streak</span>
+          </div>
+        </div>
+        <div class="completion-next">
+          <p>Ready for the next challenge?</p>
+          <div class="completion-actions">
+            <button class="next-q-btn" id="btnRetryQuiz">🔄 Retry Quiz</button>
+            <button class="puzzle-action-btn check" id="btnGoToChain">🧩 Try Attack Chain Puzzle</button>
+          </div>
+        </div>
+      </div>
+    `;
+    container.querySelector("#btnRetryQuiz").addEventListener("click", () => {
+      soundFX.playClick();
+      this.currentQIndex = 0;
+      this.score = 0;
+      this.streak = 0;
+      this.render();
+    });
+    container.querySelector("#btnGoToChain").addEventListener("click", () => {
+      soundFX.playClick();
+      this.currentMode = "chain";
+      this.initChainPuzzle();
+      this.render();
     });
   }
 
@@ -227,6 +287,10 @@ export class QuizArena {
         <div class="puzzle-header">
           <h3>🧩 Mission: Reconstruct The Chronological Cyber Attack Chain</h3>
           <p>Click the tactics in the correct sequential order an advanced adversary progresses through (from Reconnaissance to Impact).</p>
+          <div class="puzzle-why-box">
+            <strong>Why does order matter?</strong> Attackers must follow a logical progression — you can't steal credentials before you've gained access, and you can't move laterally before you have credentials. Understanding this sequence is the foundation of threat hunting.
+            <br><span class="puzzle-note">This puzzle covers 7 key phases of the full 14-tactic kill-chain.</span>
+          </div>
         </div>
 
         <div class="puzzle-slots-container">
@@ -329,7 +393,8 @@ export class QuizArena {
             <div class="chain-feedback correct">
               <h4>🎉 Master Adversary Chain Verified!</h4>
               <p>You correctly sequenced the entire kill-chain progression: <strong>Reconnaissance ➔ Initial Access ➔ Execution ➔ Credential Access ➔ Lateral Movement ➔ Exfiltration ➔ Impact</strong>.</p>
-              <p>Understanding this progression is the core foundation of MITRE ATT&CK threat hunting and incident response!</p>
+              <p style="margin-top:.5rem">These 7 phases map directly to Acts 1, 3, 4, 8, 10, 13, and 14 in <strong>Story Mode</strong> — go back and watch them with this sequence in mind!</p>
+              <p style="margin-top:.5rem">Understanding this progression is the core foundation of MITRE ATT&amp;CK threat hunting and incident response.</p>
             </div>
           `;
         } else {
